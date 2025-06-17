@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+html,
+body,
+#root {
+  box-sizing: border-box;
+  background: #000;
+  color: white;
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar:horizontal {
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #881337;
+  border-radius: 0.75rem;
+}
