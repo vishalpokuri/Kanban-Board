@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import TrashIcon from "../icons/TrashIcon";
 import type { Id, Task } from "../types";
 import { useSortable } from "@dnd-kit/sortable";
@@ -12,6 +12,11 @@ interface Props {
 function TaskCard({ task, deleteTask, updateTask }: Props) {
   const [mouseIsOver, setMouseIsOver] = useState(false);
   const [editMode, setEditMode] = useState(false);
+  const [tempContent, setTempContent] = useState(task.content);
+
+  useEffect(() => {
+    setTempContent(task.content);
+  }, [task.content]);
 
   const {
     setNodeRef,
@@ -57,16 +62,20 @@ function TaskCard({ task, deleteTask, updateTask }: Props) {
       >
         <textarea
           className="h-[90%] w-full resize-none border-none rounded bg-transparent text-white focus:outline-none"
-          value={task.content}
+          value={tempContent}
           autoFocus
           placeholder="Type here"
-          onBlur={toggleEditMode}
+          onBlur={() => {
+            updateTask(task.id, tempContent);
+            toggleEditMode();
+          }}
           onKeyDown={(e) => {
             if (e.key === "Enter" && e.shiftKey) {
+              updateTask(task.id, tempContent);
               toggleEditMode();
             }
           }}
-          onChange={(e) => updateTask(task.id, e.target.value)}
+          onChange={(e) => setTempContent(e.target.value)}
         ></textarea>
       </div>
     );

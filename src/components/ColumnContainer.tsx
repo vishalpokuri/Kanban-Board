@@ -2,7 +2,7 @@ import { SortableContext, useSortable } from "@dnd-kit/sortable";
 import TrashIcon from "../icons/TrashIcon";
 import type { Column, Id, Task } from "../types";
 import { CSS } from "@dnd-kit/utilities";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import PlusIcon from "../icons/PlusIcon";
 import TaskCard from "./TaskCard";
 interface Props {
@@ -24,6 +24,12 @@ function ColumnContainer({
   tasks,
 }: Props) {
   const [editMode, setEditMode] = useState(false);
+  const [tempTitle, setTempTitle] = useState(column.title);
+
+  useEffect(() => {
+    setTempTitle(column.title);
+  }, [column.title]);
+
   const {
     setNodeRef,
     attributes,
@@ -71,18 +77,22 @@ function ColumnContainer({
       >
         <div className="flex gap-2">
           <div className="flex justify-center items-center bg-[#161c22] px-2 py-1 text-sm rounded-full">
-            0
+            {tasks.length}
           </div>
           <p>{!editMode && column.title}</p>
           {editMode && (
             <input
-              value={column.title}
+              value={tempTitle}
               className="bg-black focus:border-rose-500 border-rounded outline-none px-2"
-              onChange={(e) => updateColumn(column.id, e.target.value)}
+              onChange={(e) => setTempTitle(e.target.value)}
               autoFocus
-              onBlur={() => setEditMode(false)}
+              onBlur={() => {
+                updateColumn(column.id, tempTitle);
+                setEditMode(false);
+              }}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
+                  updateColumn(column.id, tempTitle);
                   setEditMode(false);
                 }
               }}
